@@ -107,21 +107,6 @@ body {
   margin-bottom: 0;
 }
 
-.signup-btn {
-  padding: 13px 20px;
-  background-color: #fdbb28;
-  border-radius: 0;
-  font-size: 20px;
-  font-weight: bold;
-  color: #fff;
-  margin-bottom: 14px;
-}
-.signup-btn:hover {
-  border: 1px solid #fdbb28;
-  background-color: #fff;
-  color: #fdbb28;
-}
-
 .login-title {
   font-size: 30px;
   color: #000;

@@ -1,0 +1,72 @@
+<!-- Edited -->
+{% extends 'base.html' %}
+{% block pagetitle %}Profile{% endblock %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="card border-top border-primary">
+  <div class="card-header fw-bold">
+    Update Profile
+  </div>
+  <div class="card-body">
+    <form class="row g-3" method="post" enctype="multipart/form-data" onsubmit="setFormSubmitting()">
+      {% csrf_token %}
+      <div class="col-md-6">
+        <label for="Image" class="form-label fw-bold">Current Image </label>
+        <img src="{{ request.user.profile.profile_img.url }}" alt="{{user.get_full_name}}" style="height: 9rem; width: auto;">
+        <p class="card-text"><b>Username: </b>{{user.username}}</p>
+        <p class="card-text">
+          {% if user.is_superuser %}
+          <i class="bi bi-person-fill-gear"></i> Administrator
+          {% elif user.is_staff %}
+          <i class="bi bi-person-check"></i> Staff
+          {% else %}
+          <i class="bi bi-person"></i> User
+          {% endif %}
+        </p>
+      </div>
+      <div class="col-md-6">
+        <label for="Image" class="form-label fw-bold">Upload Image</label>
+        {{ p_form.profile_img }}
+        <img src="" style="height: 9rem; width: auto;" class="img-fluid pt-3" id="frame"> <!--This is the preview image -->
+      </div>
+      <div class="col-md-12">
+        <label for="email" class="form-label">Email Address</label>
+        {{ u_form.email }}
+      </div>
+      <div class="col-md-6">
+        <label for="first_name" class="form-label">First Name</label>
+        {{ u_form.first_name }}
+      </div>
+      <div class="col-md-6">
+        <label for="last_name" class="form-label">Last Name</label>
+        {{ u_form.last_name }}
+      </div>
+      <div class="col-12">
+        <button class="btn btn-outline-success" type="submit">Update</button>
+        <button class="btn btn-outline-info" type="reset">Reset</button>
+        <a class="btn btn-outline-danger" href="{% url 'profile' %}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  // This code is used to throw an alert to the user when he is leaving the page, once made a change in the form
+  var formSubmitting = false;
+  var setFormSubmitting = function() {
+    formSubmitting = true;
+  };
+  window.onload = function() {
+    window.addEventListener("beforeunload", function(e) {
+      if (formSubmitting) {
+        return undefined;
+      }
+      // This is the alert message
+      var confirmationMessage = 'It looks like you have been editing something. ' +
+        'If you leave before saving, your changes will be lost.';
+      (e || window.event).returnValue = confirmationMessage;
+      return confirmationMessage;
+    });
+  };
+</script>
+{% endblock %}

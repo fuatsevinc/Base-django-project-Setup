@@ -1,3 +1,86 @@
-{% block content %}
+{% extends 'registration/registerbase.html' %}
+{% load static %}
+{% block pagetitle %}Registration{% endblock %}
 
+{% block content %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-6 login-section-wrapper">
+      <div class="brand-wrapper">
+        <img src="https://www.bootstrapdash.com/demo/login-template-free-1/assets/images/logo.svg" alt="logo" class="logo">
+      </div>
+      <div class="">
+        <h1 class="login-title">User Registration</h1>
+        {% if messages %}
+        <div class="alert alert-danger alert-dismissable fade show" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>{% for message in messages %}
+          <p>{{message}}</p>{% endfor %}
+        </div>
+        {% endif %}
+        {% if form.errors %}
+        <div class="alert alert-danger alert-dismissable fade show" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          {% for field in form %}
+          {% if field.errors %}
+          <li type="1">{{ field.label }}: {{ field.errors|striptags }}</li>
+          {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+        <form action="{% url 'sign_up' %}" method="POST">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col form-group">
+              <label for="username">Username</label>
+              {{form.username}}
+            </div>
+            <div class="col form-group">
+              <label for="email">Email address</label>
+              {{form.email}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col form-group">
+              <label for="first_name">First Name</label>
+              {{form.first_name}}
+            </div>
+            <div class="col form-group">
+              <label for="last_name">Last Name</label>
+              {{form.last_name}}
+            </div>
+          </div>
+          <div class="row">
+            <div class=" col form-group mb-4">
+              <label for="password1">Password</label>
+              <div class="input-group" id="show_hide_password">
+                {{form.password1}}
+                <span class="input-group-text" id="password1-visible">
+                  <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
+                </span>
+              </div>
+            </div>
+            <div class="col form-group">
+              <label for="password2">Re-type Password</label>
+              <div class="input-group" id="show_reenter_password">
+                {{form.password2}}
+                <span class="input-group-text" id="reenter-password-visible">
+                  <a href=""><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
+                </span>
+              </div>
+            </div>
+          </div>
+          <button class="btn btn-outline-primary btn-block btn-lg" type="submit" name="Register" id="Register">Register</button>
+        </form>
+        <p class="login-wrapper-footer-text">Already have an account? <a href="{% url 'login' %}" class="text-reset">Login here</a></p>
+      </div>
+    </div>
+    <div class="col-sm-6 px-0 d-none d-sm-block">
+      <img src="https://www.bootstrapdash.com/demo/login-template-free-1/assets/images/login.jpg" alt="login image" class="login-img">
+    </div>
+  </div>
+</div>
 {% endblock %}

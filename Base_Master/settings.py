@@ -15,12 +15,12 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-k6k-x^q$jjp*@bs#_7yw-!&cyn4g^byvr*lseiok=h=t#!)bw4'
+ENCRYPT_KEY = b'Py6zhVP-eFxkfq0kHUN0ZmIePwwaOeQ12ZmrFAVLbI8='
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',
+    'jazzmin', #Package used to customize the Django Admin Panel
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,8 +42,11 @@ INSTALLED_APPS = [
     'firstapp',
     # External pacakages
     'crispy_forms',
+    'import_export',
+    'social_django',
+    'django_cleanup.apps.CleanupConfig',
 ]
-
+IMPORT_EXPORT_USE_TRANSACTIONS = True #Mandatory for Transactions perfomred with import_export package
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
@@ -112,7 +115,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
@@ -125,18 +128,23 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
+# Media Files (Images, Files...), This files are stored with associate with databse
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+###### Message Rendering tags ######
 from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
-        messages.DEBUG: 'alert-secondary',
-        messages.INFO: 'alert-info',
-        messages.SUCCESS: 'alert-success',
-        messages.WARNING: 'alert-warning',
-        messages.ERROR: 'alert-danger',
+    messages.DEBUG: 'alert-secondary',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
 }
 
 #### Email Intergration ###
@@ -146,9 +154,10 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'Email Id' #You should type your Email address
 EMAIL_HOST_PASSWORD = 'password' #You should type your Email password
 EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'noreply<no_reply@company.com>'
 
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'login'
+LOGIN_REDIRECT_URL = 'home' #this Url is used to redirect Users after login
+LOGOUT_REDIRECT_URL = 'login' #this Url is used to redirect Users after logout
 
 ######################  ADMIN DASHBOARD OVERWRITE  ######################
 JAZZMIN_SETTINGS = {
@@ -162,7 +171,7 @@ JAZZMIN_SETTINGS = {
     "site_brand": "Brand Name",
 
     # Logo to use for your site, must be present in static files, used for brand on top left
-    "site_logo": "logo.png",
+    "site_logo": "../static/login_styling/favicon.svg",
 
     # Logo to use for your site, must be present in static files, used for login form logo (defaults to site_logo)
     "login_logo": None,
@@ -209,7 +218,7 @@ JAZZMIN_SETTINGS = {
     # Related Modal #
     #################
     # Use modals instead of popups
-    "related_modal_active": False,
+    "related_modal_active": True,
 
     #############
     # UI Tweaks #
@@ -233,3 +242,37 @@ JAZZMIN_SETTINGS = {
     # override change forms on a per modeladmin basis
     "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
 }
+
+## Social Authentication Configuration
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2', ## Google Authentication
+    'social_core.backends.github.GithubOAuth2', ## Github Authentication
+    'django.contrib.auth.backends.ModelBackend', ## Normal Username & Password Authentication
+)
+
+## Google Authentication Keys
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'xxxxxxxxxxxxxxxxxxxxx'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'xxxxxxxxxxxxxxxxl'
+
+## Github Authetication Keys
+SOCIAL_AUTH_GITHUB_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxx'
+SOCIAL_AUTH_GITHUB_SECRET = 'xxxxxxxxxxxxxxxxxxxxx'
+SOCIAL_AUTH_GITHUB_SCOPE = ['user:email','user.user','user:profile_name']
+
+## Social Authentication Features.
+## Remove from pipeline, if you want to remove any feature.
+
+## Example: If you dont want user to be created automatically, if the user is not there in database.
+## Remove 'social_core.pipeline.user.create_user', from the pipeline. Then it wont create users if user not exist.
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
